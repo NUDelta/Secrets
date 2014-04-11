@@ -19,7 +19,8 @@ function submit(){
 	},
 	{
 		success: function(object){
-			alert("yay! it worked");
+			alert("Secret Submitted");
+    		$('#myForm').find("input[type=text], textarea").val("");
 		}
 	},
 	{
