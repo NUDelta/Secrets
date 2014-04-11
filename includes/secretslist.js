@@ -43,7 +43,6 @@ function showPositions(position){
 function submitTask(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
-	console.log(currentSecretID);
 	query.get(currentSecretID,{
 		success: function(secret){
 			secret.set("done", "IP");
