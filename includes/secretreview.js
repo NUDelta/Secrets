@@ -8,7 +8,7 @@ function reviewTable(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
 	query.equalTo("done", "IP");
-	query.limit(20);
+	query.limit(25);
 	query.find({
 		success: function(results){
 			for(var i = 0; i< results.length; i++){
@@ -16,7 +16,7 @@ function reviewTable(){
 				results[i].get('conditionForSharingWithSomeoneElse')+ '</td><td>' + 
 				results[i].get('submission')+'</td><td>' + 
 				results[i].get('lat')+' '+ results[i].get('long') + '</td></tr>'
-				$('#myTable tr:last').after(data);
+				$('#myTable tbody').html(data);
 			}
 		}
 	});
