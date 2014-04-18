@@ -1,24 +1,17 @@
 $(document).ready(function(){
 
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
-	secretsTable();
+	fillInfo();
 });
 
-function secretsTable(){
+function fillInfo(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
 	query.equalTo("done", "no");
-	query.limit(20);
+	query.limit(1);
 	query.find({
 		success: function(results){
-			var data;
-			for(var i = 0; i< results.length; i++){
-				data += '<tr onclick = "current(this)" class ='+ results[i].id +' ><td class = "stitle">' + results[i].get('Secret') +'</td><td>' + 
-				results[i].get('Category')+ '</td><td>' + 
-				results[i].get('secretLocation')+'</td><td>' + 
-				results[i].get('conditionForSharingWithSomeoneElse')+'</td></tr>'
-			}
-			$('#myTable tbody').html(data);
+			$("#title").val(results.get("Secret"))
 		}
 	});
 }

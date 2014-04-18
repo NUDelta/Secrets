@@ -15,7 +15,7 @@ function reviewTable(){
 				var data = '<tr onclick = "current(this)" class ='+ results[i].id +' ><td class = "stitle">' + results[i].get('Secret') +'</td><td>' + 
 				results[i].get('conditionForSharingWithSomeoneElse')+ '</td><td>' + 
 				results[i].get('submission')+'</td><td>' + 
-				results[i].get('latitude')+' '+ results[i].get('longitude') + '</td></tr>'
+				results[i].get('lat')+' '+ results[i].get('long') + '</td></tr>'
 				$('#myTable tr:last').after(data);
 			}
 		}

@@ -15,7 +15,8 @@ function submit(){
 		Category: values["category"],
 		secretLocation: values["location"],
 		Directions: $('#directions').val(),
-		conditionForSharingWithSomeoneElse: $('#task').val()
+		conditionForSharingWithSomeoneElse: $('#task').val(),
+		done: "no"
 	},
 	{
 		success: function(object){
