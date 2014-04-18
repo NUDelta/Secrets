@@ -11,32 +11,36 @@ function fillInfo(){
 	query.limit(1);
 	query.find({
 		success: function(results){
-			$('#title').html(results[0].get("Secret") + "<br><small>Corey</small>");
+			currentSecretID = results[0].id
+			$('#title').html(results[0].get("Secret") + "<br><small>"+ results[0].get("Name")+"</small>");
 			$('#user').html("hello");
 			$('#category b').after(results[0].get("Category"));
 			$('#location b').after(results[0].get("secretLocation"));
-			$('#summary b').after("This is a Placeholder summary");
+			$('#summary b').after(results[0].get("Summary"));
 			$('#taskdesc').html("<br>" + results[0].get("conditionForSharingWithSomeoneElse"))
-			$('.proof b').after("submit a picture of you performing the task")
+			$('.proof b').after("<ul><li>"+ results[0].get("Proof")+"</li></ul>")
 		}
 	});
 }
 
 
 function saveData(position){
-	console.log(position.coords.latitude);
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
 	query.get(currentSecretID,{
 		success: function(secret){
 			secret.set("done", "IP");
 			secret.set("submission", $('#submission').val());
-			secret.set("lat", position.coords.latitude);
-			secret.set("long", position.coords.longitude);
+			if(position.coords != undefined){
+				secret.set("lat", position.coords.latitude);
+				secret.set("long", position.coords.longitude);
+			}
+			secret.set("selected", "no");
 			secret.save(null, {
 				success: function(secret){
 					alert('Submission Recorded, your secret will appear when it is approved');
-					location.reload();
+					console.log(secret.get("selected"))
+					window.location.href = "secretsList.html"
 				},
 				error: function(secret, error){
 					console.log(error);
@@ -49,9 +53,29 @@ function saveData(position){
 	});
 }
 
-function submitTask(){
-	if(navigator.geolocation){
-		navigator.geolocation.getCurrentPosition(saveData);
+function submit(){
+	if("geolocation" in navigator){
+		console.log("hi")
+		navigator.geolocation.getCurrentPosition(saveData, saveData);
 	}
 	else{console.log("Geolocation not supported");}
+}
+
+function back(){
+	var Secret = Parse.Object.extend("NorthwesternSecrets");
+	var query = new Parse.Query(Secret);
+	query.get(currentSecretID,{
+		success: function(secret){
+			secret.set("selected", "no");
+			secret.save(null, {
+				success: function(secret){
+					console.log(secret.get("selected"))
+					window.location.href = "secretsList.html"
+				},
+				error: function(secret, error){
+					console.log(error);
+				}
+			});
+		}
+	});
 }
