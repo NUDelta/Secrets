@@ -7,24 +7,21 @@ $(document).ready(function(){
 function fillInfo(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
-	query.equalTo("done", "no");
+	query.equalTo("selected", "yes");
 	query.limit(1);
 	query.find({
 		success: function(results){
-			$("#title").val(results.get("Secret"))
+			$('#title').html(results[0].get("Secret") + "<br><small>Corey</small>");
+			$('#user').html("hello");
+			$('#category b').after(results[0].get("Category"));
+			$('#location b').after(results[0].get("secretLocation"));
+			$('#summary b').after("This is a Placeholder summary");
+			$('#taskdesc').html("<br>" + results[0].get("conditionForSharingWithSomeoneElse"))
+			$('.proof b').after("submit a picture of you performing the task")
 		}
 	});
 }
 
-
-function current(thisthingy){
-	$( ".modal-body" ).html("<h4>Current Selection</h4><p> <b>Title: </b> "
-		+ $(thisthingy).children("td").html() +"</p><p><b>Task: </b>" 
-		+ $(thisthingy).children("td:nth-child(4)").html() +"</p><b>Proof:<b><br>submit an image link or video, or just click the button to submit current gps coordinates<br><textarea class = 'form-control' id='submission'></textarea><br>");
-	currentSecretID = $(thisthingy).attr('class');
-	$('#currentSelection').modal("show");
-
-}
 
 function saveData(position){
 	console.log(position.coords.latitude);
@@ -39,7 +36,7 @@ function saveData(position){
 			secret.save(null, {
 				success: function(secret){
 					alert('Submission Recorded, your secret will appear when it is approved');
-					//location.reload();
+					location.reload();
 				},
 				error: function(secret, error){
 					console.log(error);

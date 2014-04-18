@@ -25,14 +25,20 @@ function secretsTable(){
 
 
 function current(thisthingy){
-	$( ".modal-body" ).html("<h4>Current Selection</h4><p> <b>Title: </b> "
-		+ $(thisthingy).children("td").html() +"</p><p><b>Task: </b>" 
-		+ $(thisthingy).children("td:nth-child(4)").html() +"</p><b>Proof:<b><br>submit an image link or video, or just click the button to submit current gps coordinates<br><textarea class = 'form-control' id='submission'></textarea><br>");
 	currentSecretID = $(thisthingy).attr('class');
-	$('#currentSelection').modal("show");
-
+	var Secret = Parse.Object.extend("NorthwesternSecrets");
+	var query  = new Parse.Query(Secret);
+	query.get(currentSecretID,{
+		success:function(secret){
+			secret.set("selected", "yes");
+			secret.save(null, {
+				success:function(secret){
+					window.location.href = 'secretPage.html'
+				}
+			});
+		}
+	});
 }
-
 function saveData(position){
 	console.log(position.coords.latitude);
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
