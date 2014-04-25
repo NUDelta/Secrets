@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
 	fillInfo();
 });
@@ -7,18 +6,15 @@ $(document).ready(function(){
 function fillInfo(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
-	query.equalTo("selected", "yes");
-	query.limit(1);
-	query.find({
-		success: function(results){
-			currentSecretID = results[0].id
-			$('#title').html(results[0].get("Secret") + "<br><small>"+ results[0].get("Name")+"</small>");
+	query.get(GetURLParameter("id"), {
+		success: function(secret){
+			$('#title').html(secret.get("Secret") + "<br><small>"+ secret.get("Name")+"</small>");
 			$('#user').html("hello");
-			$('#category b').after(results[0].get("Category"));
-			$('#location b').after(results[0].get("secretLocation"));
-			$('#summary b').after(results[0].get("Summary"));
-			$('#taskdesc').html("<br>" + results[0].get("conditionForSharingWithSomeoneElse"))
-			$('.proof b').after("<ul><li>"+ results[0].get("Proof")+"</li></ul>")
+			$('#category b').after(secret.get("Category"));
+			$('#location b').after(secret.get("secretLocation"));
+			$('#summary b').after(secret.get("Summary"));
+			$('#taskdesc').html("<br>" +secret.get("conditionForSharingWithSomeoneElse"))
+			$('.proof b').after("<ul><li>"+ secret.get("Proof")+"</li></ul>")
 		}
 	});
 }
@@ -27,7 +23,7 @@ function fillInfo(){
 function saveData(position){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
-	query.get(currentSecretID,{
+	query.get(GetURLParameter("id"),{
 		success: function(secret){
 			secret.set("done", "IP");
 			secret.set("submission", $('#submission').val());
@@ -35,7 +31,6 @@ function saveData(position){
 				secret.set("lat", position.coords.latitude);
 				secret.set("long", position.coords.longitude);
 			}
-			secret.set("selected", "no");
 			secret.save(null, {
 				success: function(secret){
 					alert('Submission Recorded, your secret will appear when it is approved');
@@ -61,21 +56,15 @@ function submit(){
 	else{console.log("Geolocation not supported");}
 }
 
-function back(){
-	var Secret = Parse.Object.extend("NorthwesternSecrets");
-	var query = new Parse.Query(Secret);
-	query.get(currentSecretID,{
-		success: function(secret){
-			secret.set("selected", "no");
-			secret.save(null, {
-				success: function(secret){
-					console.log(secret.get("selected"))
-					window.location.href = "secretsList.html"
-				},
-				error: function(secret, error){
-					console.log(error);
-				}
-			});
-		}
-	});
+function GetURLParameter(sParam){
+	var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('&');
+	for (var i = 0; i < sURLVariables.length; i++)
+	{
+	var sParameterName = sURLVariables[i].split('=');
+	if (sParameterName[0] == sParam)
+	{
+	return sParameterName[1];
+	}
+	}
 }
