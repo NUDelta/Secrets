@@ -15,6 +15,8 @@ function fillInfo(){
 			$('#summary b').after(secret.get("Summary"));
 			$('#taskdesc').html("<br>" +secret.get("conditionForSharingWithSomeoneElse"))
 			$('.proof b').after("<ul><li>"+ secret.get("Proof")+"</li></ul>")
+			console.log(secret.get("Image"))
+			$('#pic').attr("src", secret.get("Image"))
 		}
 	});
 }
