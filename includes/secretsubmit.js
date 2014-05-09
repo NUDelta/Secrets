@@ -38,35 +38,17 @@ function submit(){
 }
 
 function upload(file) {
- 
-  // file is from a <input> tag or from Drag'n Drop
-  // Is the file an image?
- 
-  if (!file || !file.type.match(/image.*/)) return;
- 
-  // It is!
-  // Let's build a FormData object
- 
-  var fd = new FormData();
-  fd.append("image", file);
-   // Append the file
-/*  fd.append("key", "9c3b5dd69c6a11a80f5747566df6fb6b1ed6892b");
-  // Get your own key: http://api.imgur.com/*/
- 
-  // Create the XHR (Cross-Domain XHR FTW!!!)
-  var xhr = new XMLHttpRequest();
+	console.log(file)
 
-  xhr.open("POST", "http://api.imgur.com/3/image.json");
-  xhr.onload = function() {
-    // Big win!
-    // The URL of the image is:
-    console.log('success')
-    var link = JSON.parse(xhr.responseText).data.link
-      console.log(JSON.parse(xhr.responseText).data.link);
-    console.log(JSON.parse(xhr.responseText).upload.links.imgur_page);
-   }
-   // Ok, I don't handle the errors. An exercice for the reader.
-   // And now, we send the formdata
-   xhr.setRequestHeader('Authorization', 'Client-ID 25452dcdd5e816d')
-   xhr.send(fd);
+	$.ajax({
+		url: 'https://api.imgur.com/3/image',
+		method:'POST',
+		headers:{
+			Authorization:'Client-ID 25452dcdd5e816d',
+		},
+		data: {
+			'image': file.toString()
+		},
+		success: function(){console.log('yay')}
+	});
  }

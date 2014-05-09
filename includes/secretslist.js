@@ -1,7 +1,16 @@
 $(document).ready(function(){
-
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
 	Secret = Parse.Object.extend("NorthwesternSecrets");
+	var currentUser = Parse.User.current();
+	if (currentUser) {
+    	$("#login").hide()
+    	$("#completed").show()
+    	$("#profile").html('<img src ="profile.jpg" style = "height:30px; margin-right:5px"></img>       '+ currentUser.get("username")+'<b class = "caret"></b>')
+		console.log(currentUser.get("newcomplete"))
+		if(currentUser.get("newcomplete")){
+			$("#new").show()
+		}
+	} 
 	secretsThumbnail();
 	secretsTable();
 	$('#myTable').hide();
@@ -37,7 +46,8 @@ function secretsThumbnail(){
 					title: results[i].get("Secret"),
 					summary: results[i].get("Summary"),
 					location: results[i].get("secretLocation"),
-					image: results[i].get("Image")
+					image: results[i].get("Image"),
+					done: results[i].get("done")
 				};
 			}
 			filters(searchList);
@@ -64,6 +74,7 @@ function filterList(){
 			hidden.push(categories[i].id)
 	}
 	query.notContainedIn("Category", hidden)
+	query.descending("createdAt")
 	query.equalTo("done", "no")
 	query.find({
 		success: function(results){
@@ -75,7 +86,8 @@ function filterList(){
 					title: results[i].get("Secret"),
 					summary: results[i].get("Summary"),
 					location: results[i].get("secretLocation"),
-					image: results[i].get("Image")
+					image: results[i].get("Image"),
+					done:results[i].get("done")
 				};
 			}
 			searchFilter(searchList)
@@ -109,8 +121,12 @@ function displaySecrets(results){
 	var data ="";
 	for(var i = 0; i< Math.min(15, results.length); i++){
 		data += '<li class = "col-xs-4"><a href = "secretPage.html?id='+ results[i].id +
-		'" class = "thumbnail" style = "padding:0; height: 205px; overflow: hidden;">'+
-		'<div style = "height:100px; overflow:hidden;">'+
+		'" class = "thumbnail" style = "padding:0; height: 205px; overflow: hidden;' 
+		/*if(results[i].done == 'yes'){
+			data += 'border-color:green; background-color: rgba(0, 255, 0, .2)'
+			results[i].image = 
+		}*/
+		data+='"><div style = "height:100px; overflow:hidden;">'+
 		'<image src ="'+ results[i].image +'" style = "max-width:100%"></img></div>'+
 		'<div class = "caption" style = "padding: 5px;"><b style = "font-size:large;">'+
 		results[i].title+ '</b><hr style = "-webkit-margin-before:1px; -webkit-margin-after:1px">'+
@@ -152,4 +168,10 @@ function searchFilter(results){
 	}
 	
 	$('.thumbnails').html(data);
+}
+function logout(){
+	Parse.User.logOut();
+	$("#login").show()
+	$("#completed").hide()
+	$('#logoutnotif').show()
 }

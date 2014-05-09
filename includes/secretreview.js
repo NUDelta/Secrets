@@ -47,3 +47,21 @@ function approve(){
 		}
 	});
 }
+function deny(){
+	var Secret = Parse.Object.extend("NorthwesternSecrets");
+	var query = new Parse.Query(Secret);
+	query.get(currentSecretID,{
+		success: function(secret){
+			secret.set("done", "no");
+			secret.save(null, {
+				success: function(secret){
+					alert('Secret denied');
+					location.reload();
+				}
+			})
+		},
+		error: function(object, error){
+			console.log("no object with this ID");
+		}
+	});
+}
