@@ -5,17 +5,18 @@ $(document).ready(function(){
 });
 
 function secretsTable(){
-	var Secret = Parse.Object.extend("NorthwesternSecrets");
+	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
+	query.include("secretID")
 	query.equalTo("done", "yes");
-	query.limit(25);
+	query.equalTo("UserID", Parse.User.current())
 	query.find({
 		success: function(results){
 			var data;
 			for(var i = 0; i< results.length; i++){
-				data += '<tr onclick = "current(this)" class ='+ results[i].id +' ><td class = "stitle">' + results[i].get('Secret') +'</td><td>' + 
-				results[i].get('secretLocation')+ '</td><td>' + 
-				results[i].get('Directions')+'</td>'
+				data += '<tr onclick = "current(this)" class ='+ results[i].id +' ><td class = "stitle">' + results[i].get("secretID").get('Secret') +'</td><td>' + 
+				results[i].get("secretID").get('secretLocation')+ '</td><td>' + 
+				results[i].get("secretID").get('Directions')+'</td>'
 			}
 			$('#myTable tbody').html(data);
 		}

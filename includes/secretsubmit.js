@@ -13,6 +13,7 @@ function submit(){
 	var secret = new NorthwesternSecrets();
 	secret.save(
 	{
+		ownerID: Parse.User.current(),
 		Secret: $('#title').val(),
 		Category: $('#category').val(),
 		secretLocation: $('#location').val(),

@@ -5,17 +5,18 @@ $(document).ready(function(){
 });
 
 function reviewTable(){
-	var Secret = Parse.Object.extend("NorthwesternSecrets");
-	var query = new Parse.Query(Secret);
-	query.equalTo("done", "IP");
-	query.limit(25);
+	var Submission = Parse.Object.extend("Submission");
+	var query = new Parse.Query(Submission)
+	query.include("secretID")
+	query.equalTo("done", "IP")
+	query.equalTo("ownerID", Parse.User.current())
 	query.find({
 		success: function(results){
 			for(var i = 0; i< results.length; i++){
-				var data = '<tr onclick = "current(this)" class ='+ results[i].id +' ><td class = "stitle">' + results[i].get('Secret') +'</td><td>' + 
-				results[i].get('conditionForSharingWithSomeoneElse')+ '</td><td>' + 
-				results[i].get('submission')+'</td><td>' + 
-				results[i].get('lat')+' '+ results[i].get('long') + '</td></tr>'
+				var data = '<tr onclick = "current(this)" class ='+ results[i].id +' ><td class = "stitle">' + results[i].get('secretID').get('Secret') +'</td><td>' + 
+				results[i].get("secretID").get('conditionForSharingWithSomeoneElse')+ '</td><td>' + 
+				results[i].get('secretID').get('submission')+'</td><td>' + 
+				results[i].get('secretID').get('lat')+' '+ results[i].get('secretID').get('long') + '</td></tr>'
 				$('#myTable tbody').html(data);
 			}
 		}
@@ -30,14 +31,15 @@ function current(thisthingy){
 }
 
 function approve(){
-	var Secret = Parse.Object.extend("NorthwesternSecrets");
+	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
-	query.get(currentSecretID,{
+	query.include('userID')
+	query.equalTo("objectId", currentSecretID)
+	query.find({
 		success: function(secret){
-			secret.set("done", "yes");
-			secret.save(null, {
-				success: function(secret){
-					alert('Secret approved');
+			secret[0].set("done", "yes");
+			secret[0].save(null, {
+				success: function(){
 					location.reload();
 				}
 			})
@@ -50,10 +52,11 @@ function approve(){
 function deny(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
-	query.get(currentSecretID,{
+	query.equalTo("objectId", currentSecretID)
+	query.get({
 		success: function(secret){
-			secret.set("done", "no");
-			secret.save(null, {
+			secret[0].set("done", "no");
+			secret[0].save(null, {
 				success: function(secret){
 					alert('Secret denied');
 					location.reload();

@@ -15,8 +15,9 @@ function fillInfo(){
 			$('#summary b').after(secret.get("Summary"));
 			$('#taskdesc').html("<br>" +secret.get("conditionForSharingWithSomeoneElse"))
 			$('.proof b').after("<ul><li>"+ secret.get("Proof")+"</li></ul>")
-			console.log(secret.get("Image"))
 			$('#pic').attr("src", secret.get("Image"))
+			mySecret = secret
+			owner = secret.get("ownerID")
 		}
 	});
 }
@@ -25,7 +26,7 @@ function fillInfo(){
 function saveData(position){
 	var Secret = Parse.Object.extend("Submission");
 	var object = new Secret()
-	object.set("secretID", GetURLParameter("id"))
+	object.set("secretID", mySecret)
 	object.set("done", "IP");
 	object.set("submission", $('#submission').val());
 	if(position.coords != undefined){
@@ -33,9 +34,9 @@ function saveData(position){
 		object.set("long", position.coords.longitude);
 	}
 	object.set("UserID", Parse.User.current())
+	object.set("ownerID", owner)
 	object.save(null, {
 		success: function(secret){
-			alert('Submission Recorded, your secret will appear when it is approved');
 			console.log(secret.get("selected"))
 			window.location.href = "secretsList.html"
 		},

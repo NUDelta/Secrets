@@ -6,7 +6,7 @@ $(document).ready(function(){
     	$("#login").hide()
     	$("#completed").show()
     	$("#profile").html('<img src ="profile.jpg" style = "height:30px; margin-right:5px"></img>       '+ currentUser.get("username")+'<b class = "caret"></b>')
-		console.log(currentUser.get("newcomplete"))
+		/*check to see if a secret has been approved but not seen yet*/
 		if(currentUser.get("newcomplete")){
 			$("#new").show()
 		}
@@ -174,4 +174,13 @@ function logout(){
 	$("#login").show()
 	$("#completed").hide()
 	$('#logoutnotif').show()
+}
+
+function dismiss(){
+	currentUser = Parse.User.current()
+	currentUser.set("newcomplete", false)
+	currentUser.save(null, {
+		success:function(user){
+		}
+	})
 }
