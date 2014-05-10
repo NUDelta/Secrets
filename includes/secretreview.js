@@ -38,6 +38,7 @@ function approve(){
 	query.find({
 		success: function(secret){
 			secret[0].set("done", "yes");
+			secret[0].set("new", true)
 			secret[0].save(null, {
 				success: function(){
 					location.reload();

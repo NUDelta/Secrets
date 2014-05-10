@@ -7,13 +7,27 @@ $(document).ready(function(){
     	$("#completed").show()
     	$("#profile").html('<img src ="profile.jpg" style = "height:30px; margin-right:5px"></img>       '+ currentUser.get("username")+'<b class = "caret"></b>')
 		/*check to see if a secret has been approved but not seen yet*/
-		if(currentUser.get("newcomplete")){
-			$("#new").show()
-		}
-	} 
-	secretsThumbnail();
-	secretsTable();
-	$('#myTable').hide();
+		var sub = Parse.Object.extend("Submission")
+		var query = new Parse.Query(sub)
+		query.equalTo("new", true)
+		query.equalTo("userID", currentUser)
+		query.find({
+			success:function(results){
+				$("#new").show()
+				secretsThumbnail();
+				secretsTable();
+				$('#myTable').hide();
+			},
+			error:function(){
+				console.log("lol")
+			}
+		})
+	}
+	else{ 
+		secretsThumbnail();
+		secretsTable();
+		$('#myTable').hide();
+	}
 
 });
 
@@ -176,6 +190,7 @@ function logout(){
 	$('#logoutnotif').show()
 }
 
+/*update this function in order to make the display dissapear when the user clicks the x*/
 function dismiss(){
 	currentUser = Parse.User.current()
 	currentUser.set("newcomplete", false)
