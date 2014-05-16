@@ -17,6 +17,11 @@ $(document).ready(function(){
 				if(results.length!=0){
 					$("#new").show()
 				}
+				console.log(GetURLParameter("submit"))
+				if(GetURLParameter("submit")=="true"){
+					$('#submitsuc').show()
+					window.history.replaceState({}, "", "secretsList.html")
+				}
 				secretsThumbnail();
 				secretsTable();
 				$('#myTable').hide();
@@ -26,7 +31,6 @@ $(document).ready(function(){
 				query2.equalTo("ownerID", Parse.User.current())
 				query2.find({
 					success:function(results){
-						console.log("yay")
 						if(results.length!=0){
 							$("#review").show()
 						}
@@ -43,6 +47,17 @@ $(document).ready(function(){
 	}
 
 });
+
+function GetURLParameter(sParam){
+	var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('&');
+	for (var i = 0; i < sURLVariables.length; i++){
+		var sParameterName = sURLVariables[i].split('=');
+		if (sParameterName[0] == sParam){
+			return sParameterName[1];
+		}
+	}
+}
 
 function secretsTable(){
 	var Secret = Parse.Object.extend("NorthwesternSecrets");

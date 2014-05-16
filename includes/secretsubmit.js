@@ -4,85 +4,78 @@ $(document).ready(function(){
 	$('#picture').change(function(event){
 		$.each(event.target.files, function(index, file){
 			myfile = file
+			upload(myfile)
 		});
 	});
-
+	$('#category').mouseup(function(){
+		$("#my"+ $(this).attr("id")).text($(this).val())
+	})
 	$('.form-control').keyup(function(){
 		$("#my"+ $(this).attr("id")).text($(this).val())
 	})
+	$(".form-control").popover({
+		animation:true,
+		title:"Examples",
+		placement:"bottom",
+		trigger:'focus'
+	});  
+
 });
 
 
+
 function submit(){
+	var NorthwesternSecrets = Parse.Object.extend("NorthwesternSecrets"); 
+	var secret = new NorthwesternSecrets();
+	secret.save(
+	{
+		ownerID: Parse.User.current(),
+		Secret: $('#title').val(),
+		Category: $('#category').val(),
+		secretLocation: $('#location').val(),
+		Directions: $('#secret').val(),
+		Summary: $('#summary').val(),
+		conditionForSharingWithSomeoneElse: $('#taskdesc').val(),
+		done: "no",
+		Name: Parse.User.current().getUsername(),
+		Image: $('#pic').attr("src")
+	},
+	{
+		success: function(object){
+			alert("Secret Submitted");
+    		$('#myForm').find("input[type=text], textarea").val("");
+    		$('#pic').attr("src", "secret.jpg")
+		}
+	},
+	{
+		error: function(object, error){
+			alert(error);
+		}
+	});
+}
+
+function upload(myfile) {
 	var reader = new FileReader();
 	reader.onload = function(event){
 		object = {};
 		object.filename = myfile.name;
 		object.data = event.target.result;
 		object.data = object.data.slice(object.data.indexOf('base64')+7, object.data.length)
-		upload(object)
-	};
-	reader.readAsDataURL(myfile)
-}
-
-function upload(file) {
-	$.ajax({
+		$.ajax({
 		url: 'https://api.imgur.com/3/image',
 		method:'POST',
 		headers:{
 			Authorization:'Client-ID 25452dcdd5e816d',
 		},
 		data: {
-			image: file.data,
+			image: object.data,
 			type:'base64'
 		},
 		success: function(obj, stat, xhr){
-			
-			var NorthwesternSecrets = Parse.Object.extend("NorthwesternSecrets"); 
-			var secret = new NorthwesternSecrets();
-			secret.save(
-			{
-				ownerID: Parse.User.current(),
-				Secret: $('#title').val(),
-				Category: $('#category').val(),
-				secretLocation: $('#location').val(),
-				Directions: $('#secret').val(),
-				Proof: $('#proof').val(),
-				Summary: $('#summary').val(),
-				conditionForSharingWithSomeoneElse: $('#task').val(),
-				done: "no",
-				Name:"testUser",
-				Image: JSON.parse(xhr.responseText).data.link,
-			},
-			{
-				success: function(object){
-					alert("Secret Submitted");
-		    		$('#myForm').find("input[type=text], textarea").val("");
-				}
-			},
-			{
-				error: function(object, error){
-					alert(error);
-				}
-			});
+			$('#pic').attr("src", JSON.parse(xhr.responseText).data.link)
 		}		
 	});
+	};
+	reader.readAsDataURL(myfile)
+	
  }
-
-function getBase64Image(img) {
-    // Create an empty canvas element
-    var canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    // Copy the image contents to the canvas
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-
-    // Get the data-URL formatted image
-    // Firefox supports PNG and JPEG. You could check img.src to
-    // guess the original format, but be aware the using "image/jpg"
-    // will re-encode the image.
-    var dataURL = canvas.toDataURL("image/jpg");
-
-    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-}
