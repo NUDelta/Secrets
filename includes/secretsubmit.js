@@ -1,9 +1,12 @@
+
 $(document).ready(function(){
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
-	$('#picture').change(function(e){
-		var files = e.target.files;
-		upload(files[0]);
+	$('#picture').change(function(event){
+		$.each(event.target.files, function(index, file){
+			myfile = file
+		});
 	});
+
 	$('.form-control').keyup(function(){
 		$("#my"+ $(this).attr("id")).text($(this).val())
 	})
@@ -11,39 +14,18 @@ $(document).ready(function(){
 
 
 function submit(){
-	 
-	var NorthwesternSecrets = Parse.Object.extend("NorthwesternSecrets"); 
-	var secret = new NorthwesternSecrets();
-	secret.save(
-	{
-		ownerID: Parse.User.current(),
-		Secret: $('#title').val(),
-		Category: $('#category').val(),
-		secretLocation: $('#location').val(),
-		Directions: $('#secret').val(),
-		Proof: $('#proof').val(),
-		Summary: $('#summary').val(),
-		conditionForSharingWithSomeoneElse: $('#task').val(),
-		done: "no",
-		Name:"testUser",
-		Image: "secret.jpg"
-	},
-	{
-		success: function(object){
-			alert("Secret Submitted");
-    		$('#myForm').find("input[type=text], textarea").val("");
-		}
-	},
-	{
-		error: function(object, error){
-			alert(error);
-		}
-	});
+	var reader = new FileReader();
+	reader.onload = function(event){
+		object = {};
+		object.filename = myfile.name;
+		object.data = event.target.result;
+		object.data = object.data.slice(object.data.indexOf('base64')+7, object.data.length)
+		upload(object)
+	};
+	reader.readAsDataURL(myfile)
 }
 
 function upload(file) {
-	//console.log(file.toString())
-	//file64 = getBase64Image(file)
 	$.ajax({
 		url: 'https://api.imgur.com/3/image',
 		method:'POST',
@@ -51,10 +33,39 @@ function upload(file) {
 			Authorization:'Client-ID 25452dcdd5e816d',
 		},
 		data: {
-			image: "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+			image: file.data,
 			type:'base64'
 		},
-		success: function(){console.log('yay')}
+		success: function(obj, stat, xhr){
+			
+			var NorthwesternSecrets = Parse.Object.extend("NorthwesternSecrets"); 
+			var secret = new NorthwesternSecrets();
+			secret.save(
+			{
+				ownerID: Parse.User.current(),
+				Secret: $('#title').val(),
+				Category: $('#category').val(),
+				secretLocation: $('#location').val(),
+				Directions: $('#secret').val(),
+				Proof: $('#proof').val(),
+				Summary: $('#summary').val(),
+				conditionForSharingWithSomeoneElse: $('#task').val(),
+				done: "no",
+				Name:"testUser",
+				Image: JSON.parse(xhr.responseText).data.link,
+			},
+			{
+				success: function(object){
+					alert("Secret Submitted");
+		    		$('#myForm').find("input[type=text], textarea").val("");
+				}
+			},
+			{
+				error: function(object, error){
+					alert(error);
+				}
+			});
+		}		
 	});
  }
 

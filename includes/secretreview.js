@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
 	reviewTable();
 });
@@ -66,6 +65,27 @@ function deny(){
 		},
 		error: function(object, error){
 			console.log("no object with this ID");
+		}
+	});
+}
+
+function clearnew(){
+	var sub = Parse.Object.extend("Submission");
+	var query = new Parse.Query(sub);
+	query.equalTo("new", true);
+	query.find({
+		success: function(results){
+			if(results.length!=0){
+				results[0].set("new", false)
+				results[0].save(null,{
+					success: function(result){
+						console.log("asdf")
+					}
+				})
+			}
+		},
+		error:function(a,b){
+			console.log("no new secrets")
 		}
 	});
 }

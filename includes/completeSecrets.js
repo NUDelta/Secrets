@@ -15,7 +15,7 @@ function secretsTable(){
 		success: function(results){
 			var data;
 			for(var i = 0; i< results.length; i++){
-				data += '<tr onclick = "current(this)" class ="'+ results[i].id +'"'
+				data += '<tr class ="'+ results[i].id +'"'
 				if(results[i].get("new")){
 					data += 'style = "color:green"'
 				}
@@ -34,12 +34,14 @@ function clearnew(){
 	query.equalTo("new", true);
 	query.find({
 		success: function(results){
-			results[0].set("new", false)
-			results[0].save(null,{
-				success: function(result){
-					console.log("asdf")
-				}
-			})
+			if(results.length!=0){
+				results[0].set("new", false)
+				results[0].save(null,{
+					success: function(result){
+						console.log("asdf")
+					}
+				})
+			}
 		},
 		error:function(a,b){
 			console.log("no new secrets")

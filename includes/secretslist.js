@@ -10,18 +10,31 @@ $(document).ready(function(){
 		var sub = Parse.Object.extend("Submission")
 		var query = new Parse.Query(sub)
 		query.equalTo("new", true)
-		query.equalTo("userID", currentUser)
+		query.equalTo("UserID", Parse.User.current())
+		query.equalTo("done", "yes")
 		query.find({
 			success:function(results){
-				$("#new").show()
+				if(results.length!=0){
+					$("#new").show()
+				}
 				secretsThumbnail();
 				secretsTable();
 				$('#myTable').hide();
-			},
-			error:function(){
-				console.log("lol")
+				var query2 = new Parse.Query(sub)
+				query2.equalTo("new", true)
+				query2.equalTo("done","IP")
+				query2.equalTo("ownerID", Parse.User.current())
+				query2.find({
+					success:function(results){
+						console.log("yay")
+						if(results.length!=0){
+							$("#review").show()
+						}
+					}
+				});
 			}
 		})
+
 	}
 	else{ 
 		secretsThumbnail();

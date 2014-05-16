@@ -28,6 +28,7 @@ function saveData(position){
 	var object = new Secret()
 	object.set("secretID", mySecret)
 	object.set("done", "IP");
+	object.set("new", true)
 	object.set("submission", $('#submission').val());
 	if(position.coords != undefined){
 		object.set("lat", position.coords.latitude);
@@ -37,8 +38,22 @@ function saveData(position){
 	object.set("ownerID", owner)
 	object.save(null, {
 		success: function(secret){
-			console.log(secret.get("selected"))
-			window.location.href = "secretsList.html"
+			var req = $.ajax( {url: "http://secrets.ci.northwestern.edu:3000",
+					type: "GET",
+					data: {name: Parse.User.current().getUsername(), 
+					       email: Parse.User.current().getEmail(),
+					       type:"approve" }
+			 })
+		     .done(function() {
+			     alert( "success" );
+			 })
+		     .fail(function() {
+			     alert( "error" );
+			 })
+		     .always(function() {
+			     alert( "complete" );
+			 });
+			//window.location.href = "secretsList.html"
 		},
 		error: function(secret, error){
 			console.log(error);
