@@ -112,11 +112,11 @@ function filterList(){
 					id: results[i].id,
 					category: results[i].get("Category"),
 					title: results[i].get("Secret"),
-					summary: shorten(results[i].get("Summary"), 150),
+					summary: shorten(results[i].get("Summary"), 220),
 					location: results[i].get("secretLocation"),
 					image: results[i].get("Image"),
 					done:results[i].get("done"),
-					task:shorten(results[i].get("conditionForSharingWithSomeoneElse"),65)
+					task:shorten(results[i].get("conditionForSharingWithSomeoneElse"),58)
 				};
 			}
 			searchFilter(searchList)
@@ -173,9 +173,9 @@ function displaySecrets(results){
 			class: "title"
 		}).append(results[i].title)
 		var bar = $('<hr>')
-		var task = $('<span></span>').append(results[i].task)
-		var desc = $('<span></span>').append(results[i].summary)
-		caption.append(title, bar, task,desc)
+		var task = $('<span></span>').append("<b>Task: </b>",results[i].task)
+		var desc = $('<span></span>').append("<b>Summary: </b>",results[i].summary)
+		caption.append(title, bar, desc,"<hr>",task)
 		
 		secretlink.append(pictureContainer, caption)
 		secret.append(secretlink)

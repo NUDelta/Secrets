@@ -73,11 +73,11 @@ function reviewTable(){
 				row.append(feedback)
 
 				var approve = $("<button></button>",{
-					onclick : "approve('"+results[i].get("UserID").getUsername() +"','" +results[i].get("UserID").get("email") +"')",
+					onclick : "approve('"+results[i].get("UserID").getUsername() +"','" +results[i].get("UserID").get("email") + "','"+ results[i].id+"')",
 					class : "btn btn-default validationbutton"
 				}).append("Approve")
 				var deny = $("<button></button>",{
-					onclick : "deny('"+results[i].get("UserID").getUsername() +"','" +results[i].get("UserID").get("email") +"')",
+					onclick : "deny('"+results[i].get("UserID").getUsername() +"','" +results[i].get("UserID").get("email") + "','"+ results[i].id+"')",
 					class : "btn btn-default validationbutton deny"
 				}).append("Deny")
 				row.append(approve,deny)
@@ -106,7 +106,7 @@ function current(thisthingy){
 		myemail = $(thisthingy).attr('myemail')
 }
 
-function approve(username, myemail){
+function approve(username, myemail, currentSecretID){
 	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
 	query.include('userID')
@@ -134,7 +134,7 @@ function approve(username, myemail){
 		}
 	});
 }
-function deny(username, myemail){
+function deny(username, myemail, currentSecretID){
 
 	var Secret = Parse.Object.extend("NorthwesternSecrets");
 	var query = new Parse.Query(Secret);
@@ -173,7 +173,6 @@ function clearnew(){
 				results[0].set("new", false)
 				results[0].save(null,{
 					success: function(result){
-						console.log("asdf")
 					}
 				})
 			}
