@@ -17,9 +17,12 @@ $(document).ready(function(){
 				if(results.length!=0){
 					$("#new").show()
 				}
-				console.log(GetURLParameter("submit"))
 				if(GetURLParameter("submit")=="true"){
 					$('#submitsuc').show()
+					window.history.replaceState({}, "", "secretsList.html")
+				}
+				if(GetURLParameter("newsecret")=="true"){
+					$('#newsuc').show()
 					window.history.replaceState({}, "", "secretsList.html")
 				}
 				secretsThumbnail();
@@ -129,7 +132,8 @@ function filterList(){
 					summary: results[i].get("Summary"),
 					location: results[i].get("secretLocation"),
 					image: results[i].get("Image"),
-					done:results[i].get("done")
+					done:results[i].get("done"),
+					task:results[i].get("conditionForSharingWithSomeoneElse")
 				};
 			}
 			searchFilter(searchList)
@@ -160,21 +164,40 @@ function switchType(){
 }
 
 function displaySecrets(results){
-	var data ="";
+	var secrets =$("<ul></ul>",{
+		class:"thumbnails"
+	});
 	for(var i = 0; i< Math.min(15, results.length); i++){
-		data += '<li class = "col-xs-4"><a href = "secretPage.html?id='+ results[i].id +
-		'" class = "thumbnail" style = "padding:0; height: 205px; overflow: hidden;' 
-		/*if(results[i].done == 'yes'){
-			data += 'border-color:green; background-color: rgba(0, 255, 0, .2)'
-			results[i].image = 
-		}*/
-		data+='"><div style = "height:100px; overflow:hidden;">'+
-		'<image src ="'+ results[i].image +'" style = "max-width:100%"></img></div>'+
-		'<div class = "caption" style = "padding: 5px;"><b style = "font-size:large;">'+
-		results[i].title+ '</b><hr style = "-webkit-margin-before:1px; -webkit-margin-after:1px">'+
-		'<span>'+results[i].summary+'</span></div></a></li>'
+		var secret =$('<li class = "col-xs-4 secret"></li>');
+		var secretlink = $('<a></a>',{
+			href: "secretPage.html?id=" + results[i].id,
+			class: "thumbnail"
+		})
+		//create picturedisplay for tile
+		var pictureContainer = $('<div></div>', {
+			class: "imagecontainer"
+		})
+		var picture = $('<img></img>', {
+			src: results[i].image
+		})
+		pictureContainer.append(picture)
+
+		//create caption for tile
+		var caption = $('<div></div>',{
+			class: "caption"
+		})
+		var title = $('<span></span>',{
+			class: "title"
+		}).append(results[i].title)
+		var bar = $('<hr>')
+		var task = $('<span></span>').append(results[i].task)
+		caption.append(title, bar, task)
+		
+		secretlink.append(pictureContainer, caption)
+		secret.append(secretlink)
+		secrets.append(secret)
 	}
-	return data;
+	return secrets;
 }
 
 function displaySecretsTable(results){
@@ -209,13 +232,7 @@ function searchFilter(results){
 		data= displaySecrets(filtered);
 	}
 	
-	$('.thumbnails').html(data);
-}
-function logout(){
-	Parse.User.logOut();
-	$("#login").show()
-	$("#completed").hide()
-	$('#logoutnotif').show()
+	$('#list').html(data);
 }
 
 /*update this function in order to make the display dissapear when the user clicks the x*/

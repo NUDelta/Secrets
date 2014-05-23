@@ -1,5 +1,21 @@
 $(document).ready(function(){
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
+	if(Parse.User.current()){
+		window.location.href="secretsList.html"
+	}
+	$("#loginform").keypress(function(event){
+		console.log(event.keyCode)
+		if(event.keyCode == 13){
+			login()
+		}
+	})
+	$("#signupform").keypress(function(event){
+		console.log(event.keyCode)
+		if(event.keyCode == 13){
+			signup()
+		}
+	})
+
 	$('#spasswordconfirm, #spassword').keyup(function(){
 		if ($("#spassword").val()==$("#spasswordconfirm").val()){
 			$("#spass, #spassc").removeClass("has-error")

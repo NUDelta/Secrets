@@ -13,45 +13,85 @@ $(document).ready(function(){
 	$('.form-control').keyup(function(){
 		$("#my"+ $(this).attr("id")).text($(this).val())
 	})
-	$(".form-control").popover({
+	$(".form-control").not("#category").popover({
 		animation:true,
 		title:"Examples",
 		placement:"bottom",
 		trigger:'focus'
-	});  
+	});
+	currid = GetURLParameter("id")
+	if(currid){
+		var Secret = Parse.Object.extend("NorthwesternSecrets");
+		var query = new Parse.Query(Secret)
+		query.equalTo("objectId",currid)
+		query.find({
+			success: function(result){
+				$('#title').val(result[0].get("Secret"));
+				$("#mytitle").text($("#title").val())
+				$('#category').val(result[0].get("Category"));
+				$("#mycategory").text($("#category").val())
+				$('#location').val(result[0].get("secretLocation"));
+				$("#mylocation").text($("#location").val())
+				$('#secret').val(result[0].get("Directions"));
+				$("#mysecret").text($("#secret").val())
+				$('#summary').val(result[0].get("Summary"));
+				$("#mysummary").text($("#summary").val())
+				$('#taskdesc').val(result[0].get("conditionForSharingWithSomeoneElse"));
+				$("#mytaskdesc").text($("#taskdesc").val())
+				$('#pic').attr("src",result[0].get("Image"));
+			}
+		});
+	}  
 
 });
+
+function GetURLParameter(sParam){
+	var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('&');
+	for (var i = 0; i < sURLVariables.length; i++)
+	{
+	var sParameterName = sURLVariables[i].split('=');
+	if (sParameterName[0] == sParam)
+	{
+	return sParameterName[1];
+	}
+	}
+}
 
 
 
 function submit(){
-	var NorthwesternSecrets = Parse.Object.extend("NorthwesternSecrets"); 
-	var secret = new NorthwesternSecrets();
-	secret.save(
-	{
-		ownerID: Parse.User.current(),
-		Secret: $('#title').val(),
-		Category: $('#category').val(),
-		secretLocation: $('#location').val(),
-		Directions: $('#secret').val(),
-		Summary: $('#summary').val(),
-		conditionForSharingWithSomeoneElse: $('#taskdesc').val(),
-		done: "no",
-		Name: Parse.User.current().getUsername(),
-		Image: $('#pic').attr("src")
-	},
-	{
-		success: function(object){
-			alert("Secret Submitted");
-    		$('#myForm').find("input[type=text], textarea").val("");
-    		$('#pic').attr("src", "secret.jpg")
-		}
-	},
-	{
-		error: function(object, error){
-			alert(error);
-		}
-	});
+		var NorthwesternSecrets = Parse.Object.extend("NorthwesternSecrets"); 
+		var secret = new NorthwesternSecrets();
+		secret.save(
+		{
+			objectId: currid,
+			ownerID: Parse.User.current(),
+			Secret: $('#title').val(),
+			Category: $('#category').val(),
+			secretLocation: $('#location').val(),
+			Directions: $('#secret').val(),
+			Summary: $('#summary').val(),
+			conditionForSharingWithSomeoneElse: $('#taskdesc').val(),
+			done: "no",
+			Name: Parse.User.current().getUsername(),
+			Image: $('#pic').attr("src")
+		},
+		{
+			success: function(object){
+				if(currid){
+					window.location.href = "knownSecrets.html?updated=true#owned"
+				}
+				else{
+					window.location.href = "secretsList.html?newsecret=true"
+				}
+			}
+		},
+		{
+			error: function(object, error){
+				alert(error);
+			}
+		});
 }
 
 function upload(myfile) {
