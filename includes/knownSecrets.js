@@ -239,10 +239,9 @@ function submittedTable(){
 
 				var link = $("<button></button>",{
 					onclick: "window.location.href = http://cegrief.github.io/secretPage?id="+secret.id,
-					class:"btn btn-default btn-lg"
+					class:"btn btn-default btn-lg visitbtn"
 				}).append("Visit this secret page")
-				var page = $("<td></td>").append(link)
-				row.append(page)
+				row.append(link)
 
 
 				data.append(row)
@@ -294,7 +293,7 @@ function ownedTable(){
 				row.append(picture)
 
 				var editbtn = $("<button></button>",{
-					class:"btn btn-default",
+					class:"btn btn-default visitbtn",
 					onclick: "editSecret('"+results[i].id+"')"
 				}).append("Edit")
 

@@ -17,7 +17,8 @@ $(document).ready(function(){
 		animation:true,
 		title:"Examples",
 		placement:"bottom",
-		trigger:'focus'
+		trigger:'focus',
+		html:true
 	});
 	currid = GetURLParameter("id")
 	if(currid){

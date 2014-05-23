@@ -26,7 +26,6 @@ $(document).ready(function(){
 					window.history.replaceState({}, "", "secretsList.html")
 				}
 				secretsThumbnail();
-				secretsTable();
 				$('#myTable').hide();
 				var query2 = new Parse.Query(sub)
 				query2.equalTo("new", true)
@@ -60,22 +59,6 @@ function GetURLParameter(sParam){
 			return sParameterName[1];
 		}
 	}
-}
-
-function secretsTable(){
-	var Secret = Parse.Object.extend("NorthwesternSecrets");
-	var query = new Parse.Query(Secret);
-	query.equalTo("done", "no");
-	query.find({
-		success: function(results){
-			data = displaySecretsTable(results)
-			$('#myTable tbody').html(data);
-			$('myTable thead').html("<tr><th>Title</th><th>Category</th><th>Location	</th><th>Task</th> </tr>")
-			$(".secretdata").on("click", function(){
-				window.location.href = "secretPage.html?id=" + $(this).attr("id")
-			});
-		}
-	});
 }
 
 function secretsThumbnail(){
@@ -129,11 +112,11 @@ function filterList(){
 					id: results[i].id,
 					category: results[i].get("Category"),
 					title: results[i].get("Secret"),
-					summary: results[i].get("Summary"),
+					summary: shorten(results[i].get("Summary"), 150),
 					location: results[i].get("secretLocation"),
 					image: results[i].get("Image"),
 					done:results[i].get("done"),
-					task:results[i].get("conditionForSharingWithSomeoneElse")
+					task:shorten(results[i].get("conditionForSharingWithSomeoneElse"),65)
 				};
 			}
 			searchFilter(searchList)
@@ -191,7 +174,8 @@ function displaySecrets(results){
 		}).append(results[i].title)
 		var bar = $('<hr>')
 		var task = $('<span></span>').append(results[i].task)
-		caption.append(title, bar, task)
+		var desc = $('<span></span>').append(results[i].summary)
+		caption.append(title, bar, task,desc)
 		
 		secretlink.append(pictureContainer, caption)
 		secret.append(secretlink)
@@ -200,15 +184,6 @@ function displaySecrets(results){
 	return secrets;
 }
 
-function displaySecretsTable(results){
-	var data;
-	for(var i = 0; i< results.length; i++){
-		data += '<tr id = "'+ results[i].id +'" class = "secretdata" ><td class = "stitle">' + results[i].title +'</td><td>' + 
-		results[i].category+ '</td><td>' + 
-		results[i].location+'</td></tr>'
-	}
-	return data
-}
 /*
 searchfilter takes a list of "valid" results based on the category filters and
 constrains them further based on the value of the search textbox
@@ -231,7 +206,6 @@ function searchFilter(results){
 	else{
 		data= displaySecrets(filtered);
 	}
-	
 	$('#list').html(data);
 }
 
@@ -243,4 +217,12 @@ function dismiss(){
 		success:function(user){
 		}
 	})
+}
+
+function shorten(text, maxLength) {
+    var ret = text;
+    if (ret.length > maxLength) {
+        ret = ret.substr(0,maxLength-3) + "...";
+    }
+    return ret;
 }
