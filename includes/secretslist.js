@@ -2,16 +2,17 @@ $(document).ready(function(){
 	Parse.initialize("fp7oxuptKJ9ysesuXOeV4Ieul8ErSZklVwRslkJW", "HLpukqho21z1LaL7dUrPMRWI0jAu38NqmmL9qIfo");
 	Secret = Parse.Object.extend("NorthwesternSecrets");
 	var currentUser = Parse.User.current();
+	$("#known").hide()
 	if (currentUser) {
-    	$("#login").hide()
-    	$("#completed").show()
+    	$("#login, #signup").hide()
+    	$("#completed, #known").show()
     	$("#profile").html('<img src ="profile.jpg" style = "height:30px; margin-right:5px"></img>       '+ currentUser.get("username")+'<b class = "caret"></b>')
 		/*check to see if a secret has been approved but not seen yet*/
 		var sub = Parse.Object.extend("Submission")
 		var query = new Parse.Query(sub)
 		query.equalTo("new", true)
 		query.equalTo("UserID", Parse.User.current())
-		query.equalTo("done", "yes")
+		query.equalTo("done", "done")
 		query.find({
 			success:function(results){
 				if(results.length!=0){
@@ -28,7 +29,7 @@ $(document).ready(function(){
 				secretsThumbnail();
 				$('#myTable').hide();
 				var query2 = new Parse.Query(sub)
-				query2.equalTo("new", true)
+				//query2.equalTo("new", true)
 				query2.equalTo("done","IP")
 				query2.equalTo("ownerID", Parse.User.current())
 				query2.find({
@@ -102,7 +103,7 @@ function filterList(){
 			hidden.push(categories[i].id)
 	}
 	query.notContainedIn("Category", hidden)
-	query.descending("createdAt")
+	query.descending("completedCount, count, updatedAt")
 	query.equalTo("done", "no")
 	query.find({
 		success: function(results){
@@ -112,7 +113,7 @@ function filterList(){
 					id: results[i].id,
 					category: results[i].get("Category"),
 					title: results[i].get("Secret"),
-					summary: shorten(results[i].get("Summary"), 220),
+					summary: shorten(results[i].get("Summary"), 200),
 					location: results[i].get("secretLocation"),
 					image: results[i].get("Image"),
 					done:results[i].get("done"),
@@ -153,7 +154,8 @@ function displaySecrets(results){
 	for(var i = 0; i< Math.min(15, results.length); i++){
 		var secret =$('<li class = "col-xs-4 secret"></li>');
 		var secretlink = $('<a></a>',{
-			href: "secretPage.html?id=" + results[i].id,
+			onclick: "redir('" +results[i].id+"')",
+			href :"#",
 			class: "thumbnail"
 		})
 		//create picturedisplay for tile
@@ -225,4 +227,18 @@ function shorten(text, maxLength) {
         ret = ret.substr(0,maxLength-3) + "...";
     }
     return ret;
+}
+
+function redir(id){
+	if(Parse.User.current()){
+		if(id == "submit"){
+			window.location.href = "submitSecret.html"
+		}
+		else{
+			window.location.href = "secretPage.html?id=" + id
+		}
+	}
+	else{
+		window.location.href = "login.html?sign=true"
+	}
 }

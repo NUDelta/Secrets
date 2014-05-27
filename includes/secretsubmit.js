@@ -11,7 +11,7 @@ $(document).ready(function(){
 		$("#my"+ $(this).attr("id")).text($(this).val())
 	})
 	$('.form-control').keyup(function(){
-		$("#my"+ $(this).attr("id")).text($(this).val())
+		$(".my"+ $(this).attr("id")).text($(this).val())
 	})
 	$(".form-control").not("#category").popover({
 		animation:true,
@@ -20,6 +20,7 @@ $(document).ready(function(){
 		trigger:'focus',
 		html:true
 	});
+
 	currid = GetURLParameter("id")
 	if(currid){
 		var Secret = Parse.Object.extend("NorthwesternSecrets");
@@ -38,7 +39,7 @@ $(document).ready(function(){
 				$('#summary').val(result[0].get("Summary"));
 				$("#mysummary").text($("#summary").val())
 				$('#taskdesc').val(result[0].get("conditionForSharingWithSomeoneElse"));
-				$("#mytaskdesc").text($("#taskdesc").val())
+				$(".mytaskdesc").text($("#taskdesc").val())
 				$('#pic').attr("src",result[0].get("Image"));
 			}
 		});

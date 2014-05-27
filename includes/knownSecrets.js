@@ -110,11 +110,13 @@ function approve(username, myemail, currentSecretID){
 	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
 	query.include('userID')
+	query.include('secretID')
 	query.equalTo("objectId", currentSecretID)
 	query.find({
 		success: function(secret){
-			secret[0].set("done", "yes");
+			secret[0].set("done", "done");
 			secret[0].set("new", true)
+			secret[0].set("feedback",$('#feedback').val())
 			secret[0].save(null, {
 				success: function(){
 					var req = $.ajax( {url: "http://secrets.ci.northwestern.edu:3000",
@@ -124,6 +126,8 @@ function approve(username, myemail, currentSecretID){
 					       type:"approve" }
 				 	})
 		     		.done(function() {
+		     			secret[0].get("secretID").increment('completedCount')
+		     			secret[0].get("secretID").save()
 						window.location.href = "knownSecrets.html?approved=true#review"
 			 		})
 				}
@@ -135,13 +139,13 @@ function approve(username, myemail, currentSecretID){
 	});
 }
 function deny(username, myemail, currentSecretID){
-
-	var Secret = Parse.Object.extend("NorthwesternSecrets");
+	console.log(currentSecretID)
+	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
 	query.equalTo("objectId", currentSecretID)
 	query.find({
 		success: function(secret){
-			secret[0].set("done", "no");
+			secret[0].set("done", "denied");
 			secret[0].set("feedback",$('#feedback').val())
 			secret[0].save(null, {
 				success: function(secret){
@@ -149,7 +153,7 @@ function deny(username, myemail, currentSecretID){
 						type: "GET",
 						data: {name: username, 
 					       email: myemail,
-					       type:"denied" }
+					       type:"deny" }
 				 	})
 		     		.done(function() {
 						window.location.href = "knownSecrets.html?approved=false#review"
@@ -187,7 +191,7 @@ function knownTable(){
 	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
 	query.include("secretID")
-	query.equalTo("done", "yes");
+	query.equalTo("done", "done");
 	query.equalTo("UserID", Parse.User.current())
 	query.find({
 		success: function(results){
@@ -210,7 +214,6 @@ function submittedTable(){
 	var Secret = Parse.Object.extend("Submission");
 	var query = new Parse.Query(Secret);
 	query.include("secretID")
-	query.equalTo("done", "IP");
 	query.equalTo("UserID", Parse.User.current())
 	query.find({
 		success: function(results){
@@ -220,6 +223,8 @@ function submittedTable(){
 				var row = $("<tr></tr>",{
 					class: results[i].id
 				})
+				var status = $("<td></td>").append(results[i].get('done'))
+				row.append(status)
 				var title = $("<td></td>").append(secret.get('Secret'))
 				row.append(title)
 
@@ -236,11 +241,15 @@ function submittedTable(){
 				var picture = $("<td></td>").append(imagelink)
 				row.append(picture)
 
+				var feedback = $("<td></td>").append(results[i].get("feedback"))
+				row.append(feedback)
+
 				var link = $("<button></button>",{
-					onclick: "window.location.href = http://cegrief.github.io/secretPage?id="+secret.id,
+					onclick: "page('"+secret.id + "')",
 					class:"btn btn-default btn-lg visitbtn"
 				}).append("Visit this secret page")
-				row.append(link)
+				var linkcell = $("<td></td>").append(link)
+				row.append(linkcell)
 
 
 				data.append(row)
@@ -263,8 +272,7 @@ function ownedTable(){
 				})
 				var title = $("<td></td>").append(results[i].get('Secret'))
 				row.append(title)
-
-				
+			
 				var location = $("<td></td>").append(results[i].get("secretLocation"))
 				row.append(location)
 
@@ -291,6 +299,9 @@ function ownedTable(){
 				var picture = $("<td></td>").append(imagelink)
 				row.append(picture)
 
+				var attempts = $("<td></td>").append(results[i].get('count'), ' <br>(', results[i].get('completedCount'), ' Approved)')
+				row.append(attempts)
+
 				var editbtn = $("<button></button>",{
 					class:"btn btn-default visitbtn",
 					onclick: "editSecret('"+results[i].id+"')"
@@ -316,6 +327,10 @@ function fillTables(){
 	ownedTable();
 }
 
+function page(secretId){
+	window.location.href = "secretPage.html?id="+ secretId
+}
+
 function clearnew(){
 	var sub = Parse.Object.extend("Submission");
 	var query = new Parse.Query(sub);
@@ -326,7 +341,6 @@ function clearnew(){
 				results[0].set("new", false)
 				results[0].save(null,{
 					success: function(result){
-						console.log("asdf")
 					}
 				})
 			}

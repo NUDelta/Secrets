@@ -18,24 +18,30 @@ function fillInfo(){
 	query.get(GetURLParameter("id"), {
 		success: function(secret){
 			$('#title').html(secret.get("Secret") + "<br><small>"+ secret.get("Name")+"</small>");
-			$('#user').html("hello");
 			$('.category b').after(secret.get("Category"));
 			$('#location b').after(secret.get("secretLocation"));
 			$('#summary b').after(secret.get("Summary"));
 			$('.taskdesc b').after(secret.get("conditionForSharingWithSomeoneElse"))
 			$('#pic').attr("src", secret.get("Image"))
+			$('#scount').after(secret.get("count"))
+			$('#acounts').after(secret.get("completedCount"))
 			mySecret = secret
 			owner = secret.get("ownerID")
 			username = secret.get("ownerID").getUsername()
 			myemail = secret.get("ownerID").getEmail()
+			if(secret.get("ownerID").id == Parse.User.current().id){
+				console.log("lol")
+				$(".btn").prop('disabled', true)
+				$(".yoursecret").show()
+			}
 		}
 	});
 }
 
 
 function saveData(){
-	var Secret = Parse.Object.extend("Submission");
-	var object = new Secret()
+	var sub = Parse.Object.extend("Submission");
+	var object = new sub()
 	object.set("secretID", mySecret)
 	object.set("done", "IP");
 	object.set("new", true)
@@ -50,10 +56,19 @@ function saveData(){
 					type: "GET",
 					data: {name: username, 
 					       email: myemail,
-					       type:"approve" }
+					       type:"submit" }
 			 })
 		     .done(function() {
-				window.location.href = "secretsList.html?submit=true"
+		     	var Secret = Parse.Object.extend("NorthwesternSecrets")
+		     	var query = new Parse.Query(Secret)
+		     	query.get(GetURLParameter("id"), {
+		     		success:function(res){
+		     			res.increment("count");
+		     			res.save();
+		     			window.location.href = "secretsList.html?submit=true"
+		     		}
+		     	})
+				
 			 })
 			
 		},

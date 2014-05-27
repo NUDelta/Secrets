@@ -4,19 +4,20 @@ $(document).ready(function(){
 		window.location.href="secretsList.html"
 	}
 	$("#loginform").keypress(function(event){
-		console.log(event.keyCode)
 		if(event.keyCode == 13){
 			login()
 		}
 	})
 	$("#signupform").keypress(function(event){
-		console.log(event.keyCode)
 		if(event.keyCode == 13){
 			signup()
 		}
 	})
+	if(GetURLParameter("sign")=="true"){
+		$("#signin").show()
+	}
 
-	$('#spasswordconfirm, #spassword').keyup(function(){
+	$('#spasswordconfirm').keyup(function(){
 		if ($("#spassword").val()==$("#spasswordconfirm").val()){
 			$("#spass, #spassc").removeClass("has-error")
 			$("#spass, #spassc").addClass("has-success")
@@ -57,4 +58,17 @@ function signup(){
 		}
 	})
 
+}
+
+function GetURLParameter(sParam){
+	var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('&');
+	for (var i = 0; i < sURLVariables.length; i++)
+	{
+	var sParameterName = sURLVariables[i].split('=');
+	if (sParameterName[0] == sParam)
+	{
+	return sParameterName[1];
+	}
+	}
 }
