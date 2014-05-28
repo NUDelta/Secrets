@@ -299,7 +299,7 @@ function ownedTable(){
 				var picture = $("<td></td>").append(imagelink)
 				row.append(picture)
 
-				var attempts = $("<td></td>").append(results[i].get('count'), ' <br>(', results[i].get('completedCount'), ' Approved)')
+				var attempts = $("<td></td>").append(results[i].get('count'), ' Submitted<br>(', results[i].get('completedCount'), ' Approved)')
 				row.append(attempts)
 
 				var editbtn = $("<button></button>",{
@@ -308,7 +308,15 @@ function ownedTable(){
 				}).append("Edit")
 
 				var edit = $("<td></td>").append(editbtn)
+
+				/*var deletebutton = $("<button></button>",{
+					class:"btn btn-danger visitbtn",
+					onclick: "deleteSecret('"+results[i].id+"')"
+				}).append("Delete")
+				edit.append(deletebutton)*/
+
 				row.append(edit)
+
 				data.append(row)
 			}
 			$('#ownedTable thead').after(data);
@@ -319,6 +327,16 @@ function ownedTable(){
 function editSecret(id){
 	window.location.href = "submitSecret.html?id=" + id
 }
+
+/*function deleteSecret(id){
+	var Secret = Parse.Object.extend("NorthwesternSecrets")
+	var query = new Parse.Query(Secret)
+	query.get(id,{
+		success:function(secret){
+			secret.destroy({})
+		}
+	})
+}*/
 
 function fillTables(){
 	reviewTable();

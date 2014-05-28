@@ -23,8 +23,12 @@ function fillInfo(){
 			$('#summary b').after(secret.get("Summary"));
 			$('.taskdesc b').after(secret.get("conditionForSharingWithSomeoneElse"))
 			$('#pic').attr("src", secret.get("Image"))
-			$('#scount').after(secret.get("count"))
-			$('#acounts').after(secret.get("completedCount"))
+			$('#scount').after(secret.get("completedCount"))
+			var ratio = (secret.get("completedCount")/secret.get("count")).toFixed(2)
+			if (ratio == "NaN"){
+				ratio = 0
+			}
+			$('#acounts').after(ratio)
 			mySecret = secret
 			owner = secret.get("ownerID")
 			username = secret.get("ownerID").getUsername()

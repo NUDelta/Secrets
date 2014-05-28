@@ -103,7 +103,7 @@ function filterList(){
 			hidden.push(categories[i].id)
 	}
 	query.notContainedIn("Category", hidden)
-	query.descending("completedCount, count, updatedAt")
+	query.descending("updatedAt")
 	query.equalTo("done", "no")
 	query.find({
 		success: function(results){
@@ -151,7 +151,7 @@ function displaySecrets(results){
 	var secrets =$("<ul></ul>",{
 		class:"thumbnails"
 	});
-	for(var i = 0; i< Math.min(15, results.length); i++){
+	for(var i = 0; i<  results.length; i++){
 		var secret =$('<li class = "col-xs-4 secret"></li>');
 		var secretlink = $('<a></a>',{
 			onclick: "redir('" +results[i].id+"')",
