@@ -45,7 +45,6 @@ $(document).ready(function(){
 	}
 	else{ 
 		secretsThumbnail();
-		secretsTable();
 		$('#myTable').hide();
 	}
 
