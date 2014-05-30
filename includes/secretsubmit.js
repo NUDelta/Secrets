@@ -77,7 +77,9 @@ function submit(){
 			conditionForSharingWithSomeoneElse: $('#taskdesc').val(),
 			done: "no",
 			Name: Parse.User.current().getUsername(),
-			Image: $('#pic').attr("src")
+			Image: $('#pic').attr("src"),
+			count: 0,
+			completedCount: 0
 		},
 		{
 			success: function(object){
